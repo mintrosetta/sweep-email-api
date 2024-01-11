@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using sweep_email_api.Dto;
+using sweep_email_api.Models;
 using sweep_email_api.Services.Interfaces;
 
 namespace sweep_email_api.Controllers
@@ -25,7 +27,7 @@ namespace sweep_email_api.Controllers
             {
                 var replies = await this._sweepService.FetchRepliesAsync();
 
-                return Ok(new
+                return Ok(new ResponseDto<IEnumerable<TrackReply>>()
                 {
                     Success = true,
                     Message = "Successful",
@@ -34,10 +36,9 @@ namespace sweep_email_api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new
+                return BadRequest(new ResponseDto<object>()
                 {
-                    Success = false,
-                    Message = ex.Message!
+                    Message = ex.Message
                 });
             }
         }
