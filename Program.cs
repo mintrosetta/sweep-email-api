@@ -12,9 +12,11 @@ builder.Configuration.AddJsonFile($"{Environment.CurrentDirectory}\\appsettings.
 
 // Add data frin MailSetting -> Gmail -> Imap to ImapGmail Model
 builder.Services.Configure<ImapGmail>(builder.Configuration.GetSection("MailSetting:Gmail:Imap"));
+builder.Services.Configure<SmtpZimbra>(builder.Configuration.GetSection("MailSetting:Zimbra:Smtp"));
 
 // Add services to the container.
 builder.Services.AddScoped<ISweepService, SweepService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<SweepRepliesJob>();
 
 // initial hangfire configuration
@@ -50,6 +52,6 @@ app.MapControllers();
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
 
-RecurringJob.AddOrUpdate<SweepRepliesJob>("SweepJob", x => x.Run(), Cron.Minutely());
+// RecurringJob.AddOrUpdate<SweepRepliesJob>("SweepJob", x => x.Run(), Cron.Minutely());
 
 app.Run();

@@ -34,12 +34,12 @@ namespace sweep_email_api.Services
                 // open folder
                 await inbox.OpenAsync(FolderAccess.ReadWrite);
 
-                // search email has subject Re: || re: || µÍº¡ÅÑº: && has "¢ÍµÃÇ¨ÊÍºÂÍ´à§Ô¹ÅÙ¡¤éÒ"
+                // search email has subject Re: || re: || ï¿½Íºï¿½ï¿½Ñº: && has "ï¿½Íµï¿½Ç¨ï¿½Íºï¿½Í´ï¿½Ô¹ï¿½Ù¡ï¿½ï¿½ï¿½"
                 var searchCondition = SearchQuery.SubjectContains("Re:")
                                                  .Or(SearchQuery.SubjectContains("re:"))
                                                  .Or(SearchQuery.SubjectContains("re:"))
-                                                 .Or(SearchQuery.SubjectContains("µÍº¡ÅÑº:"))
-                                                 .And(SearchQuery.SubjectContains("¢ÍµÃÇ¨ÊÍºÂÍ´à§Ô¹ÅÙ¡¤éÒ"))
+                                                 .Or(SearchQuery.SubjectContains("ï¿½Íºï¿½ï¿½Ñº:"))
+                                                 .And(SearchQuery.SubjectContains("ï¿½Íµï¿½Ç¨ï¿½Íºï¿½Í´ï¿½Ô¹ï¿½Ù¡ï¿½ï¿½ï¿½"))
                                                  .And(SearchQuery.NotSeen);
 
                 // search email
@@ -71,6 +71,11 @@ namespace sweep_email_api.Services
 
                 return replies;
             }
+        }
+
+        public Task<IEnumerable<TrackReply>> ZimbraFetchRepliesAsync()
+        {
+            throw new NotImplementedException();
         }
 
         private string FilterTrackId(string subject)
