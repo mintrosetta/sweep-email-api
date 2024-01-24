@@ -1,3 +1,4 @@
+using System.Text;
 using Hangfire;
 using Hangfire.Storage.SQLite;
 using sweep_email_api.Data.Configurations;
@@ -53,6 +54,7 @@ app.MapControllers();
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
 
-RecurringJob.AddOrUpdate<SweepRepliesJob>("SweepJob", x => x.Run(), Cron.Minutely());
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+RecurringJob.AddOrUpdate<SweepRepliesJob>("SweepJob", x => x.Run(), Cron.Hourly());
 
 app.Run();

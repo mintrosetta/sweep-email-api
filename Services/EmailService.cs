@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using Microsoft.Extensions.Options;
 using sweep_email_api.Data.Configurations;
 using sweep_email_api.Services.Interfaces;
@@ -24,6 +25,8 @@ namespace sweep_email_api.Services
             msg.To.Add(receive);
             msg.Subject = subject;
             msg.Body = body;
+            msg.BodyEncoding = Encoding.UTF8;
+            msg.SubjectEncoding = Encoding.UTF8;
 
             using (var client = new SmtpClient())
             {

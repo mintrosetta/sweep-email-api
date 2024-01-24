@@ -93,6 +93,7 @@ namespace sweep_email_api.Services
 
                 // search email has subject Re: || re: || �ͺ��Ѻ: && has "�͵�Ǩ�ͺ�ʹ�Թ�١���"
                 var searchCondition = SearchQuery.SubjectContains("Re:")
+                                                 .Or(SearchQuery.SubjectContains("ตอบกลับ:"))
                                                  .And(SearchQuery.SubjectContains("ขอตรวจสอบยอดเงินลูกค้า"))
                                                  .And(SearchQuery.NotSeen);
 
