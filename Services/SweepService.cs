@@ -12,10 +12,12 @@ namespace sweep_email_api.Services
     public class SweepService : ISweepService
     {
         private readonly ImapGmail _imapGmail;
+        private readonly ImapZimbra imapZimbra;
 
-        public SweepService(IOptions<ImapGmail> imapGmail)
+        public SweepService(IOptions<ImapGmail> imapGmail, IOptions<ImapZimbra> imapZimbra)
         {
             this._imapGmail = imapGmail.Value;
+            this.imapZimbra = imapZimbra.Value;
         }
 
         public async Task<IEnumerable<TrackReply>> FetchRepliesAsync()
@@ -73,9 +75,56 @@ namespace sweep_email_api.Services
             }
         }
 
-        public Task<IEnumerable<TrackReply>> ZimbraFetchRepliesAsync()
+        public async Task<IEnumerable<TrackReply>> ZimbraFetchRepliesAsync()
         {
-            throw new NotImplementedException();
+            using (var client = new ImapClient())
+            {
+                // connect to gmail imap server
+                await client.ConnectAsync(this.imapZimbra.Host, this.imapZimbra.Port, MailKit.Security.SecureSocketOptions.SslOnConnect);
+
+                // authentication
+                await client.AuthenticateAsync(this.imapZimbra.Email, this.imapZimbra.Password);
+
+                // get inbox folder
+                var inbox = client.Inbox;
+
+                // open folder
+                await inbox.OpenAsync(FolderAccess.ReadWrite);
+
+                // search email has subject Re: || re: || �ͺ��Ѻ: && has "�͵�Ǩ�ͺ�ʹ�Թ�١���"
+                var searchCondition = SearchQuery.SubjectContains("Re:")
+                                                 .And(SearchQuery.SubjectContains("ขอตรวจสอบยอดเงินลูกค้า"))
+                                                 .And(SearchQuery.NotSeen);
+
+                // search email
+                var rawReplies = await inbox.SearchAsync(searchCondition);
+
+                List<TrackReply> replies = new List<TrackReply>();
+                foreach (var rawReply in rawReplies)
+                {
+                    // get id of message
+                    UniqueId uid = rawReply;
+
+                    // get email message by uid
+                    var message = await inbox.GetMessageAsync(uid);
+
+                    // get TextBody, remove all space from \r, splite TextBody by \n
+                    // only accepts index 0 because at index 0 is the actual response message
+                    string replyDesc = message.TextBody.Replace("\r", "").Split('\n')[0];
+
+                    replies.Add(new TrackReply
+                    {
+                        TrackId = this.FilterTrackId(message.Subject),
+                        Description = replyDesc,
+                        Amount = this.FilterAmount(replyDesc)
+                    });
+
+                    // set email as read
+                    await inbox.AddFlagsAsync(uid, MessageFlags.Seen, true);
+                }
+
+                return replies;
+            }
         }
 
         private string FilterTrackId(string subject)

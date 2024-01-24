@@ -18,7 +18,10 @@ namespace sweep_email_api.Controllers
         [HttpPost("zimbra")]
         public async Task<ActionResult> SendByZimbra()
         {
-            await this.emailService.SendByZimbraAsync("mint.rosetta2001@gmail.com", "Testing zimbra", "Testing zimbra");
+            await this.emailService.SendByZimbraAsync(
+                "mint.rosetta2001@gmail.com", 
+                "ขอตรวจสอบยอดเงินลูกค้า [TICKET ID: 10]", 
+                "ขอตรวจสอบยอดเงินของลูกค้าชื่อ นาย ภัทรพงค์ ชุมวงศ์จันทร์ เป็นจำนวนเงิน 700 บาท ถูกต้องหรือไม่ ?");
 
             return Ok(new ResponseDto<string>()
             {

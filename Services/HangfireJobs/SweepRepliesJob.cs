@@ -14,7 +14,7 @@ namespace sweep_email_api.Services.HangfireJobs
 
         public async Task Run()
         {
-            var result = await this.sweepService.FetchRepliesAsync();
+            var result = await this.sweepService.ZimbraFetchRepliesAsync();
             Console.WriteLine($"Count replies is: {result.Count()}");
         }
     }

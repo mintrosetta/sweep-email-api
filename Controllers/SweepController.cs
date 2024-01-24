@@ -38,5 +38,28 @@ namespace sweep_email_api.Controllers
                 });
             }
         }
+
+        [HttpGet("zimbra")]
+        public async Task<ActionResult> FetchZimbraAsync()
+        {
+            try
+            {
+                var replies = await this._sweepService.ZimbraFetchRepliesAsync();
+
+                return Ok(new ResponseDto<IEnumerable<TrackReply>>()
+                {
+                    Success = true,
+                    Message = "Successful",
+                    Data = replies
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseDto<object>()
+                {
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }
